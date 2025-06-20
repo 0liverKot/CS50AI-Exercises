@@ -99,48 +99,51 @@ def shortest_path(source, target):
     queue_frontier = QueueFrontier()
     neighbors = neighbors_for_person(initial_node.state)
 
+    checked = [source]
+    
     for neighbor in neighbors: 
         node = Node(neighbor[1], initial_node, neighbor[0])
-        queue_frontier.add(node)
+        
+        if node.state not in checked:
+            queue_frontier.add(node)
+            checked.append(node.state)
 
-    checked = [source]
+
+    if source == target: 
+        return [] 
 
     while True:         
         if queue_frontier.empty():
             return None;
         
-        found_new_node = False
-        while not found_new_node:
-            current_node = queue_frontier.remove()
 
-            if current_node.state not in checked:
-                found_new_node = True            
-
+        current_node = queue_frontier.remove()
 
         if current_node.state == target:
             return get_path(source, current_node)
-        
+
+
         neighbors = neighbors_for_person(current_node.state)
         for neighbor in neighbors:
             node = Node(neighbor[1], current_node, neighbor[0])
-            queue_frontier.add(node)
 
+            if node.state not in checked:
+                queue_frontier.add(node)
+                checked.append(node.state)
 
 def get_path(source, node):
     """
     returns the path taken to get to the node
-    if no path returns None
     """
     current_node = node 
     path = []
     
 
     while current_node.state != source:
-        path.append((current_node.action, current_node.state))
+        path.insert(0, (current_node.action, current_node.state))
         current_node = current_node.parent     
 
     return path
-
 
 def person_id_for_name(name):
     """
